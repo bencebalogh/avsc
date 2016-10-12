@@ -107,6 +107,40 @@ suite('schemas', function () {
       });
     });
 
+    test('custom file', function (done) {
+      var opts = {oneWayVoid: true};
+      assemble(path.join(DPATH, 'Custom.avdl'), opts, function (err, attrs) {
+        assert.strictEqual(err, null);
+        assert.deepEqual(attrs, {
+          doc: 'A protocol using advanced features.',
+          namespace: 'org.apache.avro.test',
+          messages: {
+            ok: {
+              response: {type: 'enum', symbols: ['SUCCESS', 'FAILURE']},
+              request: []
+            },
+            hash: {
+              response: 'int',
+              request: [
+                {
+                  name: 'fixed',
+                  type: {type: 'fixed', size: 2},
+                  'default': 'aa'
+                },
+                {type: 'long', name: 'length'}
+              ]
+            },
+            import: {
+              response: 'null',
+              request: [],
+              'one-way': true
+            }
+          }
+        });
+        done();
+      });
+    });
+
     test('custom import hook', function (done) {
       var hook = createImportHook({'foo.avdl': 'protocol Foo {}'});
       assemble('foo.avdl', {importHook: hook}, function (err, attrs) {
@@ -606,14 +640,10 @@ suite('schemas', function () {
       var tokenizer = new Tokenizer(str);
       var tokens = [];
       var token;
-      try {
-        while ((token = tokenizer.next())) {
-          tokens.push(token);
-        }
-      } catch (err) {
-        assert(/end of input/.test(err.message));
-        return tokens;
+      while ((token = tokenizer.next()).id !== '(eof)') {
+        tokens.push(token);
       }
+      return tokens;
     }
 
   });
