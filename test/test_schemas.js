@@ -574,15 +574,15 @@ suite('schemas', function () {
       );
     });
 
-    test('prev', function () {
+    test('back', function () {
       var t = new Tokenizer('fee 1');
       assert.equal(t.next().val, 'fee');
       assert.equal(t.next().val, '1');
-      t.prev();
+      t.back();
       assert.equal(t.next().val, '1');
-      t.prev();
-      t.prev();
-      assert.throws(function () { t.prev(); });
+      t.back();
+      t.back();
+      assert.throws(function () { t.back(); });
       assert.equal(t.next().val, 'fee');
       assert.equal(t.next().val, '1');
     });
