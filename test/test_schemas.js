@@ -78,8 +78,10 @@ suite('schemas', function () {
             {
               type: 'error',
               name: 'TestError',
+              doc: 'An error.',
               fields: [{type: 'string', name: 'message'}]
-            }
+            },
+            {type: 'error', name: 'EmptyError', fields: []}
           ],
           messages: {
             hello: {
@@ -105,6 +107,11 @@ suite('schemas', function () {
               request: [{type: 'bytes', name: 'data'}]
             },
             error: {response: 'null', request: [], errors: ['TestError']},
+            errors: {
+              response: 'string',
+              request: [],
+              errors: ['TestError', 'EmptyError']
+            },
             ping: {response: 'null', request: [], 'one-way': true}
           }
         });

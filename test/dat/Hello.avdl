@@ -38,10 +38,13 @@ protocol Simple {
     map<boolean> someMap = {"true": true};
   }
 
-  /* An error (not docstring-ed). */
+  @doc("An error.")
   error TestError {
     string message;
   }
+
+  /* Another error (not docstring-ed). */
+  error EmptyError {}
 
   /** An overridden message docstring. */
   string @doc("Greeting.") hello(string greeting = "hi");
@@ -53,5 +56,6 @@ protocol Simple {
 
   TestRecord /** Ignored. */ echo(TestRecord `record`);
   void `error`() throws TestError;
+  string `errors`() throws TestError, EmptyError;
   void ping() oneway;
 }
