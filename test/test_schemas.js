@@ -37,14 +37,16 @@ suite('schemas', function () {
           types: [
             {
               aliases: ['org.foo.KindOf'],
+              doc: 'An enum.',
               type: 'enum',
               name: 'Kind',
               symbols: ['FOO', 'BAR', 'BAZ']
             },
-            {type: 'fixed', name: 'MD5', size: 16},
+            {type: 'fixed', doc: 'A fixed.', name: 'MD5', size: 16},
             {
               type: 'record',
               name: 'TestRecord',
+              doc: 'A record.',
               fields: [
                 {
                   type: {type: 'string', foo: 'first and last'},
@@ -54,6 +56,7 @@ suite('schemas', function () {
                 {type: 'Kind', order: 'descending', name: 'kind'},
                 {type: 'MD5', name: 'hash'},
                 {
+                  doc: 'A field.',
                   type: ['MD5', 'null'],
                   aliases: ['hash'],
                   name: 'nullableHash'
@@ -80,7 +83,7 @@ suite('schemas', function () {
           ],
           messages: {
             hello: {
-              doc: 'greet',
+              doc: 'Greeting.',
               response: 'string',
               request: [{ type: 'string', name: 'greeting', 'default': 'hi'}]
             },
@@ -89,6 +92,7 @@ suite('schemas', function () {
               request: [{type: 'TestRecord', name: 'record'}]
             },
             add: {
+              doc: 'Adding.',
               response: 'int',
               request: [
                 {type: 'int', name: 'arg1'},
@@ -96,6 +100,7 @@ suite('schemas', function () {
               ]
             },
             echoBytes: {
+              doc: 'Echoing.',
               response: 'bytes',
               request: [{type: 'bytes', name: 'data'}]
             },
@@ -377,17 +382,8 @@ suite('schemas', function () {
       var hook = createImportHook({
         '1': 'protocol A { /** 1 */ @bar(true) union { null, int } foo(); }'
       });
-      assemble('1', {importHook: hook}, function (err, attrs) {
-        assert.strictEqual(err, null);
-        assert.deepEqual(attrs, {
-          protocol: 'A',
-          messages: {
-            foo: {
-              response: ['null', 'int'],
-              request: []
-            }
-          }
-        });
+      assemble('1', {importHook: hook}, function (err) {
+        assert(/union annotations/.test(err.message));
         done();
       });
     });
