@@ -10,17 +10,16 @@
  */
 
 var protocols = require('../../lib/protocols'),
-    files = require('./lib/files'),
     schemas = require('../../lib/schemas'),
     types = require('../../lib/types'),
     values = require('../../lib/values');
 
 
 function parse(schema, opts) {
-  var obj = files.load(schema);
-  return obj.protocol ?
-    protocols.createProtocol(obj, opts) :
-    types.createType(obj, opts);
+  var attrs = schemas.parseAttrs(schema);
+  return attrs.protocol || attrs.messages || attrs.types ?
+    protocols.createProtocol(attrs, opts) :
+    types.createType(attrs, opts);
 }
 
 

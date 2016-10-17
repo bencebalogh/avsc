@@ -9,13 +9,13 @@
  *
  */
 
-var files = require('./lib/files'),
+var schemas = require('../../lib/schemas'),
     types = require('../../lib/types'),
     values = require('../../lib/values');
 
 
 function parse(schema, opts) {
-  return types.createType(files.load(schema), opts);
+  return types.createType(schemas.parseAttrs(schema), opts);
 }
 
 

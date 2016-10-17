@@ -559,13 +559,13 @@ suite('schemas', function () {
 
   });
 
-  suite('parseType', function () {
+  suite('parseTypeAttrs', function () {
 
-    var parseType = schemas.parseType;
+    var parseTypeAttrs = schemas.parseTypeAttrs;
 
     test('anonymous record', function () {
       assert.deepEqual(
-        parseType('/** A foo. */ record { int foo; }'),
+        parseTypeAttrs('/** A foo. */ record { int foo; }'),
         {
           doc: 'A foo.',
           type: 'record',
@@ -576,7 +576,7 @@ suite('schemas', function () {
 
     test('fixed', function () {
       assert.deepEqual(
-        parseType('@logicalType("address") @live(true) fixed Address(6)'),
+        parseTypeAttrs('@logicalType("address") @live(true) fixed Address(6)'),
         {
           type: 'fixed',
           size: 6,
@@ -589,21 +589,70 @@ suite('schemas', function () {
 
   });
 
-  suite('parseProtocol', function () {
+  suite('parseProtocolAttrs', function () {
 
-    var parseProtocol = schemas.parseProtocol;
+    var parseProtocolAttrs = schemas.parseProtocolAttrs;
 
     test('anonymous protocol with javadoced type', function () {
       assert.deepEqual(
-        parseProtocol('protocol { /** Foo. */ int; }'),
+        parseProtocolAttrs('protocol { /** Foo. */ int; }'),
         {attrs: {types: [{doc: 'Foo.', type: 'int'}]}, imports: []}
       );
     });
 
     test('invalid message suffix', function () {
       assert.throws(function () {
-        parseProtocol('protocol { void foo() repeated; }');
+        parseProtocolAttrs('protocol { void foo() repeated; }');
       }, /suffix/);
+    });
+
+  });
+
+  suite('parseAttrs', function () {
+
+    var parseAttrs = schemas.parseAttrs;
+
+    test('inline protocol', function () {
+      assert.deepEqual(
+        parseAttrs('protocol { /** Foo. */ int; }'),
+        {types: [{doc: 'Foo.', type: 'int'}]}
+      );
+    });
+
+    test('protocol path', function () {
+      assert.deepEqual(
+        parseAttrs(path.join(DPATH, 'Ping.avdl')),
+        {
+          protocol: 'Ping',
+          messages: {ping: {request: [], response: 'id.Id'}},
+          types: [{type: 'fixed', name: 'Id', size: 64, namespace: 'id'}]
+        }
+      );
+    });
+
+    test('path to type schema', function () {
+      assert.deepEqual(
+        parseAttrs(path.join(DPATH, 'Id.avsc')),
+        {type: 'fixed', name: 'Id', size: 64, namespace: 'id'}
+      );
+    });
+
+    test('path to type IDL', function () {
+      assert.deepEqual(
+        parseAttrs(path.join(DPATH, 'Id.avdl')),
+        {type: 'fixed', name: 'Id', size: 64, namespace: 'id'}
+      );
+    });
+
+    test('protocol with imports', function () {
+      assert.throws(function () {
+        parseAttrs('protocol { import idl "foo.avdl"; }');
+      }, /unresolvable/);
+    });
+
+    test('invalid string', function () {
+      var str = 'protocol { void foo() repeated; }';
+      assert.equal(parseAttrs(str), str);
     });
 
   });

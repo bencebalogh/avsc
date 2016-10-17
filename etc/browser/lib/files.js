@@ -48,35 +48,12 @@
 })();
 
 
-/**
- * Schema loader, without file-system access.
- *
- */
-function load(schema) {
-  var obj;
-  if (typeof schema == 'string' && schema !== 'null') {
-    try {
-      obj = JSON.parse(schema);
-    } catch (err) {
-      // No file loading here.
-    }
-  }
-  if (obj === undefined) {
-    obj = schema;
-  }
-  return obj;
-}
-
-/**
- * Default (erroring) hook for assembling IDLs.
- *
- */
-function createImportHook() {
-  return function (fpath, kind, cb) { cb(new Error('missing import hook')); };
-}
+function createError() { return new Error('unsupported in the browser'); }
 
 
 module.exports = {
-  createImportHook: createImportHook,
-  load: load
+  createImportHook: function (fpath, kind, cb) { cb(createError()); },
+  createSyncImportHook: function () { throw createError(); },
+  existsSync: function () { return false; },
+  readFileSync: function () { throw createError(); }
 };

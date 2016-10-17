@@ -8,7 +8,6 @@
  */
 
 var containers = require('../../lib/containers'),
-    files = require('./lib/files'),
     protocols = require('../../lib/protocols'),
     schemas = require('../../lib/schemas'),
     types = require('../../lib/types'),
@@ -18,8 +17,8 @@ var containers = require('../../lib/containers'),
 
 
 function parse(schema, opts) {
-  var attrs = files.load(schema);
-  return attrs.protocol ?
+  var attrs = schemas.parseAttrs(schema);
+  return attrs.protocol || attrs.messages || attrs.types ?
     protocols.createProtocol(attrs, opts) :
     types.createType(attrs, opts);
 }
