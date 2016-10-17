@@ -28,7 +28,8 @@ suite('schemas', function () {
     });
 
     test('single file', function (done) {
-      assemble(path.join(DPATH, 'Hello.avdl'), function (err, attrs) {
+      var opts = {ackVoidMessages: true};
+      assemble(path.join(DPATH, 'Hello.avdl'), opts, function (err, attrs) {
         assert.strictEqual(err, null);
         assert.deepEqual(attrs, {
           namespace: 'org.apache.avro.test',
@@ -120,8 +121,7 @@ suite('schemas', function () {
     });
 
     test('custom file', function (done) {
-      var opts = {oneWayVoid: true};
-      assemble(path.join(DPATH, 'Custom.avdl'), opts, function (err, attrs) {
+      assemble(path.join(DPATH, 'Custom.avdl'), function (err, attrs) {
         assert.strictEqual(err, null);
         assert.deepEqual(attrs, {
           doc: 'A protocol using advanced features.',
@@ -467,7 +467,7 @@ suite('schemas', function () {
       var hook = createImportHook({
         '1': 'protocol A {/**1*/ @doc(2) fixed One(1);}',
       });
-      var opts = {importHook: hook, reassignJavadoc: true};
+      var opts = {importHook: hook};
       assemble('1', opts, function (err, attrs) {
         assert.strictEqual(err, null);
         assert.deepEqual(attrs, {
@@ -475,42 +475,6 @@ suite('schemas', function () {
           types: [
             {name: 'One', type: 'fixed', size: 1, doc: 2}
           ]
-        });
-        done();
-      });
-    });
-
-    test('reassign javadoc', function (done) {
-      var hook = createImportHook({
-        '1': 'import idl "2"; protocol A {/** 2 */ void pong();}',
-        '2': 'import idl "3"; protocol B { /**\n * 1 */ fixed One(1); }',
-        '3': 'protocol C{record R{/**1*/int v1;int v2;/**3*/@foo(1)int v3;}}'
-      });
-      var opts = {importHook: hook, reassignJavadoc: true};
-      assemble('1', opts, function (err, attrs) {
-        assert.strictEqual(err, null);
-        assert.deepEqual(attrs, {
-          protocol: 'A',
-          types: [
-            {
-              name: 'R',
-              namespace: '',
-              type: 'record',
-              fields: [
-                {name: 'v1', type: 'int', doc: '1'},
-                {name: 'v2', type: 'int'},
-                {name: 'v3', type: {type: 'int', foo: 1}, doc: '3'}
-              ]
-            },
-            {name: 'One', type: 'fixed', size: 1, doc: '1', namespace: ''}
-          ],
-          messages: {
-            pong: {
-              doc: '2',
-              response: 'null',
-              request: [],
-            }
-          }
         });
         done();
       });
