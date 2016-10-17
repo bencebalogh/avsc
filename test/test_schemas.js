@@ -587,6 +587,22 @@ suite('schemas', function () {
       );
     });
 
+    test('implicit collection tags', function () {
+      assert.deepEqual(
+        parseTypeAttrs('record { array int bars; }'),
+        {
+          type: 'record',
+          fields: [{type: {type: 'array', items: 'int'}, name: 'bars'}]
+        }
+      );
+    });
+
+    test('mismatched implicit collection tags', function () {
+      assert.throws(function () {
+        parseTypeAttrs('record { array < int bars; }');
+      }, />/);
+    });
+
   });
 
   suite('parseProtocolAttrs', function () {
