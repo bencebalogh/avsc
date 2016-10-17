@@ -559,6 +559,55 @@ suite('schemas', function () {
 
   });
 
+  suite('parseType', function () {
+
+    var parseType = schemas.parseType;
+
+    test('anonymous record', function () {
+      assert.deepEqual(
+        parseType('/** A foo. */ record { int foo; }'),
+        {
+          doc: 'A foo.',
+          type: 'record',
+          fields: [{type: 'int', name: 'foo'}]
+        }
+      );
+    });
+
+    test('fixed', function () {
+      assert.deepEqual(
+        parseType('@logicalType("address") @live(true) fixed Address(6)'),
+        {
+          type: 'fixed',
+          size: 6,
+          live: true,
+          name: 'Address',
+          logicalType: 'address'
+        }
+      );
+    });
+
+  });
+
+  suite('parseProtocol', function () {
+
+    var parseProtocol = schemas.parseProtocol;
+
+    test('anonymous protocol with javadoced type', function () {
+      assert.deepEqual(
+        parseProtocol('protocol { /** Foo. */ int; }'),
+        {attrs: {types: [{doc: 'Foo.', type: 'int'}]}, imports: []}
+      );
+    });
+
+    test('invalid message suffix', function () {
+      assert.throws(function () {
+        parseProtocol('protocol { void foo() repeated; }');
+      }, /suffix/);
+    });
+
+  });
+
   suite('Tokenizer', function () {
 
     var Tokenizer = schemas.Tokenizer;
@@ -567,23 +616,17 @@ suite('schemas', function () {
       assert.deepEqual(
         getTokens('hello; "you"'),
         [
-          {id: 'name', val: 'hello'},
-          {id: 'operator', val: ';'},
-          {id: 'string', val: '"you"'}
+          {id: 'name', pos: 0, val: 'hello'},
+          {id: 'operator', pos: 5, val: ';'},
+          {id: 'string', pos: 6, val: '"you"'}
         ]
       );
     });
 
-    test('back', function () {
+    test('next silent', function () {
       var t = new Tokenizer('fee 1');
       assert.equal(t.next().val, 'fee');
-      assert.equal(t.next().val, '1');
-      t.back();
-      assert.equal(t.next().val, '1');
-      t.back();
-      t.back();
-      assert.throws(function () { t.back(); });
-      assert.equal(t.next().val, 'fee');
+      assert.strictEqual(t.next({val: '2', silent: true}), undefined);
       assert.equal(t.next().val, '1');
     });
 
