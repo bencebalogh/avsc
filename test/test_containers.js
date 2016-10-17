@@ -2,8 +2,8 @@
 
 'use strict';
 
-var containers = require('../lib/containers'),
-    types = require('../lib/types'),
+var containers = require('../lib/_containers'),
+    types = require('../lib/_types'),
     assert = require('assert');
 
 

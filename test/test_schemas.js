@@ -6,7 +6,7 @@ if (process.browser) {
   return;
 }
 
-var schemas = require('../lib/schemas'),
+var schemas = require('../lib/_schemas'),
     assert = require('assert'),
     path = require('path');
 

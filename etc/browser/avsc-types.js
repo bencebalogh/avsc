@@ -9,9 +9,9 @@
  *
  */
 
-var schemas = require('../../lib/schemas'),
-    types = require('../../lib/types'),
-    values = require('../../lib/values');
+var schemas = require('../../lib/_schemas'),
+    types = require('../../lib/_types'),
+    values = require('../../lib/_values');
 
 
 function parse(schema, opts) {

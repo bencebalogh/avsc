@@ -2,8 +2,8 @@
 
 'use strict';
 
-var types = require('../lib/types'),
-    protocols = require('../lib/protocols'),
+var types = require('../lib/_types'),
+    protocols = require('../lib/_protocols'),
     assert = require('assert'),
     stream = require('stream'),
     util = require('util');

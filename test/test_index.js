@@ -7,8 +7,8 @@ if (process.browser) {
 }
 
 var index = require('../lib'),
-    protocols = require('../lib/protocols'),
-    types = require('../lib/types'),
+    protocols = require('../lib/_protocols'),
+    types = require('../lib/_types'),
     assert = require('assert'),
     path = require('path'),
     tmp = require('tmp');

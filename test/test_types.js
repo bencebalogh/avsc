@@ -2,8 +2,8 @@
 
 'use strict';
 
-var types = require('../lib/types'),
-    utils = require('../lib/utils'),
+var types = require('../lib/_types'),
+    utils = require('../lib/_utils'),
     assert = require('assert'),
     util = require('util');
 

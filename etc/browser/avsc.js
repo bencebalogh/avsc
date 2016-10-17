@@ -7,11 +7,11 @@
  *
  */
 
-var containers = require('../../lib/containers'),
-    protocols = require('../../lib/protocols'),
-    schemas = require('../../lib/schemas'),
-    types = require('../../lib/types'),
-    values = require('../../lib/values'),
+var containers = require('../../lib/_containers'),
+    protocols = require('../../lib/_protocols'),
+    schemas = require('../../lib/_schemas'),
+    types = require('../../lib/_types'),
+    values = require('../../lib/_values'),
     stream = require('stream'),
     util = require('util');
 

@@ -9,10 +9,10 @@
  *
  */
 
-var protocols = require('../../lib/protocols'),
-    schemas = require('../../lib/schemas'),
-    types = require('../../lib/types'),
-    values = require('../../lib/values');
+var protocols = require('../../lib/_protocols'),
+    schemas = require('../../lib/_schemas'),
+    types = require('../../lib/_types'),
+    values = require('../../lib/_values');
 
 
 function parse(schema, opts) {
